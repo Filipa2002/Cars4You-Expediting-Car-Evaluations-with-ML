@@ -5,7 +5,7 @@ import time
 def run_cars_api_request(repeats=3, wait_time=3600):
     API_KEY = "c2a876319341d86d00ef5bf2eed293b7"   # Our API key
     BASE = "https://api.wheel-size.com/v2"         # Base URL of the API
-    OUT = "brands_models_v2.csv"                   # Output CSV file name
+    OUT = "project_data/brands_models.csv"         # Output CSV file name
 
     # Inner function that performs one batch of requests (up to 100 makes)
     def cars_api_request():
