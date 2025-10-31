@@ -81,4 +81,3 @@ def var_report(df, col, target=None, label=None, decimals=2):
         print(f"{pfx}Median: {med_neg}  Mean: {mean_neg}  Std: {std_neg}")
         print(f"{pfx}{target} stats where 0 < {col} ≤ abs(min({col})):")
         print(f"{pfx}Median: {med_rng}  Mean: {mean_rng}  Std: {std_rng}")
-
