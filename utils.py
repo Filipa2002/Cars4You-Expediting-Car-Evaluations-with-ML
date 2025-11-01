@@ -15,17 +15,72 @@ def norm(s):
     # Replace non-alphanumeric (e.g. punctuation) characters with a single space
     return re.sub(r"[^a-z0-9]+", " ", s).strip()
 
-def fmatch(q, keys, cutoff=0.85):
-    if not q:
-        return None
-    if q in keys:
-        return q
-    best,score=None,0.0
-    for k in keys:
-        r = difflib.SequenceMatcher(None, q, k).ratio()
-        if r>score: best,score=k,r
-    return best if score>=cutoff else None
 
+
+# Finds the best match using difflib similarity ratio
+def get_best_match(query, choices, min_score=0.6):
+    # Handle None or NaN safely
+    if query is None or pd.isna(query):
+        return []
+
+    # Ensure input is string
+    query = str(query)
+    
+    # Initialize variables to track the best score and matches
+    best_score = 0
+    best_matches = []
+
+    # Special condition for short words: allow all matches
+    if len(query) <= 3:
+        min_score = 0.0  # ignore cutoff for short strings
+
+    # Iterate over all candidate choices
+    for choice in choices:
+        # Compute similarity ratio between 0 and 1
+        score = difflib.SequenceMatcher(None, query, choice).ratio()
+        # Only consider matches that meet or exceed the minimum score
+        if score >= min_score:
+            if score > best_score:
+                best_score = score
+                best_matches = [choice]
+            elif score == best_score:
+                best_matches.append(choice)
+
+    return best_matches
+
+
+
+def analyze_flagged_data(df, flag_column):
+    # Check if the flag column exists in the DataFrame to avoid errors
+    if flag_column not in df.columns:
+        print(f"Error: Column '{flag_column}' not found in the DataFrame.")
+        return pd.DataFrame()
+
+    # Define the list of flags that store lists
+    list_based_flags = [
+        'multiple_models', 
+        'multiple_models_and_brands', 
+        'multiple_brands', 
+        'multiple_models_from_a_diff_brand'
+    ]
+
+    if flag_column in list_based_flags:
+        # If flag_column is one of the list flags, use the .notnull() method to find flagged rows
+        flagged_rows = df[df[flag_column].notnull()]
+    else:
+        # Otherwise, assume it's a binary flag
+        flagged_rows = df[df[flag_column] == 1]
+    
+
+    # Create a summary DataFrame. Include the flag column itself for context,
+    # which is useful for both types of flags.
+    summary = flagged_rows[['Brand', 'model', flag_column]]
+    
+    # Print the total count
+    print(f"Count of rows flagged in '{flag_column}': {summary.shape[0]}")
+    
+    # Return the summary DataFrame for display
+    return summary
 
 def print_dup_info(df, exclude_groups=None, name="df"):
     print(f"Total duplicates in {name}: {df.duplicated().sum()}")
