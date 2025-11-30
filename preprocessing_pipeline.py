@@ -73,6 +73,8 @@ class CarPreprocessingPipeline:
         self.is_fitted = False
         # NOVO: Guardar X_train transformado
         self._X_train_transformed = None
+        # NOVO: Guardar carIDs originais do treino
+        self._original_train_ids = None
     
     
     def fit(self, X_train: pd.DataFrame, y_train: pd.DataFrame, 
@@ -82,6 +84,18 @@ class CarPreprocessingPipeline:
         
         X = X_train.copy()
         y = y_train.copy()
+        
+        # =====================================================================
+        # PRESERVAR carID - extrair antes de qualquer transformação
+        # =====================================================================
+        if 'carID' in X.columns:
+            self._original_train_ids = X['carID'].values.copy()
+            X = X.drop(columns=['carID'])
+        elif X.index.name == 'carID':
+            self._original_train_ids = X.index.values.copy()
+            X = X.reset_index(drop=True)
+        else:
+            self._original_train_ids = None
         
         self.params.manual_model_fixes = manual_model_fixes or {}
         self.params.manual_model_corrections = manual_model_corrections or {}
@@ -292,6 +306,13 @@ class CarPreprocessingPipeline:
             index=X.index
         )
         
+        # =====================================================================
+        # RESTAURAR carID como índice
+        # =====================================================================
+        if self._original_train_ids is not None:
+            X.index = self._original_train_ids
+            X.index.name = 'carID'
+        
         self.is_fitted = True
         
         # NOVO: Guardar X_train transformado
@@ -334,6 +355,18 @@ class CarPreprocessingPipeline:
         print(f"{'='*60}")
         
         df = X.copy()
+        
+        # =====================================================================
+        # PRESERVAR carID - extrair antes de qualquer transformação
+        # =====================================================================
+        if 'carID' in df.columns:
+            original_car_ids = df['carID'].values.copy()
+            df = df.drop(columns=['carID'])
+        elif df.index.name == 'carID':
+            original_car_ids = df.index.values.copy()
+            df = df.reset_index(drop=True)
+        else:
+            original_car_ids = None
         
         # 1. Normalizar Brand/model
         print("\n[1/11] Normalizando Brand e model...")
@@ -414,6 +447,13 @@ class CarPreprocessingPipeline:
         # 11. Encoding e scaling final
         print("[11/11] Aplicando encoding e scaling final...")
         df = self._apply_encoding_and_scaling(df)
+        
+        # =====================================================================
+        # RESTAURAR carID como índice
+        # =====================================================================
+        if original_car_ids is not None:
+            df.index = original_car_ids
+            df.index.name = 'carID'
         
         print(f"\n✓ Transformação concluída! Shape final: {df.shape}")
         return df
