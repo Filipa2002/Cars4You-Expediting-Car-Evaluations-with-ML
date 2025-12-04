@@ -3,6 +3,9 @@ import pandas as pd
 import unicodedata
 import re
 import difflib
+# Visualization
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Normalization function
 def norm(s):
@@ -136,3 +139,34 @@ def var_report(df, col, target=None, label=None, decimals=2):
         print(f"{pfx}Median: {med_neg}  Mean: {mean_neg}  Std: {std_neg}")
         print(f"{pfx}{target} stats where 0 < {col} ≤ abs(min({col})):")
         print(f"{pfx}Median: {med_rng}  Mean: {mean_rng}  Std: {std_rng}")
+        
+
+def plot_importance_unified(palette, importance_series, name, is_tree_model=False):
+    """Plot top 20 features by importance"""
+    imp_coef = importance_series.sort_values(ascending=False).head(20)
+    
+    color = palette[1] if is_tree_model else palette[0]
+    plt.figure(figsize=(9, 6))
+    imp_coef.sort_values().plot(kind="barh", color=color) 
+    
+    plt.title(f"Feature Importance - {name} (Top 20)", fontsize=15)
+    plt.xlabel("Importance")
+    plt.tight_layout()
+    plt.show()
+
+
+def print_selection_results(importance_series, model_name, threshold=None):
+    """Print selected features based on importance threshold"""
+    if threshold is None:
+        threshold = importance_series.mean()
+    
+    selected = importance_series[importance_series > threshold].index.tolist()
+    
+    print(f"\n{'-'*60}")
+    print(f"MODEL: {model_name}")
+    print(f"Threshold: {threshold:.4f}")
+    print(f"Selected: {len(selected)} features")
+    print(f"Features: {selected}")
+    print(f"{'-'*60}\n")
+    
+    return selected
