@@ -3,7 +3,6 @@ import pandas as pd
 import unicodedata
 import re
 import difflib
-<<<<<<< HEAD
 import matplotlib.pyplot as plt
 import seaborn as sns
 from math import ceil
@@ -178,11 +177,9 @@ def missing_data(train_df, val_df=None, test_df=None):
         out[f"{name} %"] = (df.isna().mean() * 100).round(2)
     return out
 
-=======
 # Visualization
 import matplotlib.pyplot as plt
 import seaborn as sns
->>>>>>> 2f200a6ce0d615beb73c2ff11ce85eb789988ce4
 
 def norm(s):
     """
@@ -435,7 +432,6 @@ def var_report(df, col, target=None, label=None, decimals=2):
         print(f"{pfx}Median: {med_neg}  Mean: {mean_neg}  Std: {std_neg}")
         print(f"{pfx}{target} stats where 0 < {col} ≤ abs(min({col})):")
         print(f"{pfx}Median: {med_rng}  Mean: {mean_rng}  Std: {std_rng}")
-<<<<<<< HEAD
 
 
 def correct_categorical_value(input_value, valid_values, min_score=0.6, fallback='unknown'):
@@ -664,7 +660,6 @@ def plot_boxplot_by_category(df, num_col, cat_col, top_n=None, sort_by_median=Tr
     plt.xticks(rotation=25, ha='right')
     sns.despine(top=True, right=True)
     plt.grid(axis='y', linestyle='--', alpha=0.6)
-=======
         
 
 def plot_importance_unified(palette, importance_series, name, is_tree_model=False):
@@ -677,12 +672,9 @@ def plot_importance_unified(palette, importance_series, name, is_tree_model=Fals
     
     plt.title(f"Feature Importance - {name} (Top 20)", fontsize=15)
     plt.xlabel("Importance")
->>>>>>> 2f200a6ce0d615beb73c2ff11ce85eb789988ce4
     plt.tight_layout()
     plt.show()
 
-
-<<<<<<< HEAD
 def plot_grouped_bar_with_percentage(df, cat_col1, cat_col2):
     """
     Plots a grouped bar chart showing the percentage distribution of cat_col2 within each category of cat_col1.
@@ -989,7 +981,7 @@ def collapse_rare_models(df, keep_table, brand_col="Brand", model_col="model",
     out = out.drop(columns=["keep"], errors="ignore")
 
     return out
-=======
+
 def print_selection_results(importance_series, model_name, threshold=None):
     """Print selected features based on importance threshold"""
     if threshold is None:
@@ -1005,4 +997,4 @@ def print_selection_results(importance_series, model_name, threshold=None):
     print(f"{'-'*60}\n")
     
     return selected
->>>>>>> 2f200a6ce0d615beb73c2ff11ce85eb789988ce4
+
