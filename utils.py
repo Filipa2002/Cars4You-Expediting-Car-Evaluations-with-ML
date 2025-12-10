@@ -970,7 +970,23 @@ def collapse_rare_models(df, keep_table, brand_col="Brand", model_col="model",
 
 
 def print_selection_results(importance_series, model_name, threshold=None):
-    """Print selected features based on importance threshold"""
+    """
+    Prints selected features based on importance threshold and returns the list of selected features.
+    
+    Parameters
+    ----------
+    importance_series : pd.Series
+        A pandas Series containing feature importances, indexed by feature names.
+    model_name : str
+        The name of the model (used in the printout).
+    threshold : float, optional
+        The importance threshold for selecting features. If None, uses the mean importance. Default is None.
+    
+    Returns
+    -------
+    list
+        A list of selected feature names.
+    """
     if threshold is None:
         threshold = importance_series.mean()
     
@@ -987,7 +1003,20 @@ def print_selection_results(importance_series, model_name, threshold=None):
 
 
 def plot_importance_unified(palette, importance_series, name, is_tree_model=False):
-    """Plot top 20 features by importance"""
+    """
+    Plots the top 20 feature importances from a given importance series.
+
+    Parameters
+    ----------
+    palette : list
+        A list of colors to use for the plot.
+    importance_series : pd.Series
+        A pandas Series containing feature importances, indexed by feature names.
+    name : str
+        The name of the model (used in the plot title).
+    is_tree_model : bool, optional
+        Indicates if the model is a tree-based model (affects color choice). Default is False
+    """
     imp_coef = importance_series.sort_values(ascending=False).head(20)
     
     color = palette[1] if is_tree_model else palette[0]
