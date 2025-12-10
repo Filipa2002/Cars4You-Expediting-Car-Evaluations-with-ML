@@ -967,3 +967,34 @@ def collapse_rare_models(df, keep_table, brand_col="Brand", model_col="model",
     out = out.drop(columns=["keep"], errors="ignore")
 
     return out
+
+
+def print_selection_results(importance_series, model_name, threshold=None):
+    """Print selected features based on importance threshold"""
+    if threshold is None:
+        threshold = importance_series.mean()
+    
+    selected = importance_series[importance_series > threshold].index.tolist()
+    
+    print(f"\n{'-'*60}")
+    print(f"MODEL: {model_name}")
+    print(f"Threshold: {threshold:.4f}")
+    print(f"Selected: {len(selected)} features")
+    print(f"Features: {selected}")
+    print(f"{'-'*60}\n")
+    
+    return selected
+
+
+def plot_importance_unified(palette, importance_series, name, is_tree_model=False):
+    """Plot top 20 features by importance"""
+    imp_coef = importance_series.sort_values(ascending=False).head(20)
+    
+    color = palette[1] if is_tree_model else palette[0]
+    plt.figure(figsize=(9, 6))
+    imp_coef.sort_values().plot(kind="barh", color=color) 
+    
+    plt.title(f"Feature Importance - {name} (Top 20)", fontsize=15)
+    plt.xlabel("Importance")
+    plt.tight_layout()
+    plt.show()
