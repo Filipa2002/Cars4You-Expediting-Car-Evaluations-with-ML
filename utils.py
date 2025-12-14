@@ -461,7 +461,7 @@ def correct_categorical_value(input_value, valid_values, min_score=0.6, fallback
         return matches[0]
     # Return None if multiple matches are found
     elif isinstance(matches, list) and len(matches) > 1:
-        print(f"Tie detected for value '{input_value}'. Multiple equally good matches found: {matches}") #APAGAR
+        print(f"Tie detected for value '{input_value}'. Multiple equally good matches found: {matches}")
         return None 
     # Return fallback if no matches are found
     return fallback
